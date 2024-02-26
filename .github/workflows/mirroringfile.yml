@@ -19,6 +19,6 @@ jobs:
         run: |
           git config user.name bvssel
           git config user.email rachedwassim.bassel@effyis-partners.ma
-          # git remote add gitlab 'https://bvssel:$token@gitlab.com/pfe20243/mirroringrepo.git'
+          git remote add gitlab 'https://bvssel:${{ secrets.token }}@gitlab.com/pfe20243/mirroringrepo.git'
         env:
           token: ${{ secrets.token }}
