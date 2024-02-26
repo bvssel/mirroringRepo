@@ -19,6 +19,6 @@ jobs:
         run: |
           git config user.email rachedwassim.bassel@effyis-partners.ma
           git config user.username bvssel
-          git clone https://bvssel:$MY_ACCESS_SECRET_repo@gitlab.com/pfe20243/mirroringrepo.git
+          git clone https://bvssel:$GITHUB_TOKEN@gitlab.com/pfe20243/mirroringrepo.git
         env:
-          EXTERNAL_TOKEN: ${{ secrets.MY_ACCESS_SECRET_repo }}
+          GITHUB_TOKEN: ${{ secrets.token }}
