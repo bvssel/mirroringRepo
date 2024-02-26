@@ -21,5 +21,6 @@ jobs:
           cd repo
           git push origin main
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLAB_TOKEN: ${{ secrets.MY_ACCESS_SECRET }}
 
