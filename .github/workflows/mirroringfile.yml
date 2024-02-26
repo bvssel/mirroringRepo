@@ -17,10 +17,6 @@ jobs:
 
       - name: Push to GitLab
         run: |
-          git clone git@gitlab.com:pfe20243/mirroringrepo.git repo
-          cd repo
-          git push origin main
+          git clone https://bvssel:$MY_ACCESS_SECRET_repo@gitlab.com/pfe20243/mirroringrepo.git
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLAB_TOKEN: ${{ secrets.MY_ACCESS_SECRET }}
-
+          EXTERNAL_TOKEN: ${{ secrets.MY_ACCESS_SECRET_repo }}
