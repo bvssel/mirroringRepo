@@ -17,8 +17,11 @@ jobs:
 
       - name: Push to GitLab
         run: |
-          git remote add gitlab git@gitlab.com:pfe20243/mirroringrepo.git
-          git push gitlab main
+          git clone git@gitlab.com:pfe20243/mirroringrepo.git repo
+          cd repo
+          git config --global user.email "rachedwassim.bassel@effyis-partners.ma"
+          git config --global user.username "bvssel"
+          git push origin main
         env:
           GITLAB_TOKEN: ${{ secrets.MY_ACCESS_SECRET }}
 
