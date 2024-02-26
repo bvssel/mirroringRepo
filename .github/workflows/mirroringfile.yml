@@ -21,6 +21,6 @@ jobs:
           git config user.email rachedwassim.bassel@effyis-partners.ma
           git remote add gitlab 'https://bvssel:${{ secrets.token }}@gitlab.com/pfe20243/mirroring.git'
           git pull --rebase -X theirs gitlab main 
-          git push --force gitlab main
+          git push --force gitlab HEAD:main
         env:
           token: ${{ secrets.token }}
