@@ -1,0 +1,22 @@
+# GitLab CI/CD configuration
+
+stages:
+  - sync
+
+variables:
+  GITLAB_REPO_URL: "https://bvssel:${{ secrets.token }}@gitlab.com/pfe20243/mirroring.git"
+  FOLLOW_TAGS: "false"
+  FORCE_PUSH: "false"
+  GITLAB_HOSTNAME: "gitlab.com"
+  GITLAB_USERNAME: "bvssel"
+  GITLAB_PASSWORD: ${{ secrets.GITLAB_PASSWORD }}
+  GITLAB_PROJECT_ID: "55314047"
+  GITHUB_TOKEN: ${{ secrets.token }}
+
+
+sync:
+  stage: sync
+  script:
+    - ./sync_script.sh
+  only:
+    - main
