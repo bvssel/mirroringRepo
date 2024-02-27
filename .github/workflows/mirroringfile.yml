@@ -1,6 +1,12 @@
 name: Mirror to GitLab
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -10,7 +16,7 @@ jobs:
     - name: Mirror + trigger CI
       uses: SvanBoxel/gitlab-mirror-and-ci-action@master
       with:
-        args: "https://gitlab.com/pfe20243/mirroring.git"
+        args: "https://bvssel:${{ secrets.token }}@gitlab.com/pfe20243/mirroring.git"
       env:
         FOLLOW_TAGS: "false"
         FORCE_PUSH: "false"
