@@ -1,50 +1,25 @@
-#!/bin/sh
+#!/bin/bash
 
-set -u
+# Define repository URLs
+GITLAB_REPO="git@gitlab.com:pfe20243/mirroring.git"
+GITHUB_REPO="git@github.com:bvssel/mirroringRepo.git"
 
-# Function to URL encode a string
-urlencode() (
-    i=1
-    max_i=${#1}
-    while test $i -le $max_i; do
-        c="$(expr substr $1 $i 1)"
-        case $c in
-            [a-zA-Z0-9.~_-])
-                printf "$c" ;;
-            *)
-                printf '%%%02X' "'$c" ;;
-        esac
-        i=$(( i + 1 ))
-    done
-)
+# Define a temporary directory to clone the GitLab repo
+TEMP_DIR=$(mktemp -d)
 
-# Default timeout value for polling
-DEFAULT_POLL_TIMEOUT=10
-POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
+# Clone the GitLab repo
+git clone $GITLAB_REPO $TEMP_DIR
 
-# Set up Git credentials for GitLab
-git config --global --add safe.directory /gitlab/workspace
-git checkout "$CI_COMMIT_REF_NAME"
+# Navigate into the cloned repository
+cd $TEMP_DIR
 
-# Get the branch name
-branch="$(git symbolic-ref --short HEAD)"
-# URL encode the branch name
-branch_uri="$(urlencode ${branch})"
+# Pull latest changes
+git pull origin master
 
-# Configure GitLab credentials
-git config --global credential.username $GITLAB_USERNAME
-git config --global core.askPass /cred-helper.sh
-git config --global credential.helper cache
-# Add GitLab repository as a remote
-git remote add mirror $GITLAB_REPO_URL
+# Push changes to GitHub
+git push $GITHUB_REPO master
 
-echo "Pushing to $branch branch at $GITLAB_REPO_URL"
-if [ "${FORCE_PUSH:-}" = "true" ]; then
-    git push --force mirror $branch
-else
-    git push mirror $branch
-fi
+# Clean up
+rm -rf $TEMP_DIR
 
-# Push changes to GitHub repository
-echo "Pushing changes to GitHub repository"
-git push origin $branch
+echo "Mirror complete."
