@@ -30,7 +30,7 @@ dockerize:
   dependencies:
     - build
   tags:
-    - pipe-petclinic-runner
+    - docker-runner
 
 # Editeddd
 # variables:
