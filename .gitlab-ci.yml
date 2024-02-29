@@ -7,7 +7,7 @@ stages:
 
 build:
   stage: build
-  image: maven:3.6.3-openjdk-17
+  image: docker:stable
   script:
     - docker ps
   tags:
