@@ -32,7 +32,7 @@ dockerize:
   tags:
     - docker-runner
 
-# edited 22
+# edited 33
 # variables:
 #   DOCKER_USERNAME: "bassel10"
 #   DOCKER_PASSWORD: "wassim123"
