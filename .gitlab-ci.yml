@@ -4,31 +4,35 @@ variables:
 
 stages:
   - build
+  - dockerize
 
 build:
   stage: build
-  image: docker:stable
+  image: maven:3.6.3-openjdk-17
   script:
-    - docker ps
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+  tags:
+    - pipe-petclinic-runner
+
+dockerize:
+  stage: dockerize
+  image: docker:stable
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  script:
+    - docker build -t $DOCKER_USERNAME/petclinic:latest .
+    - docker push $DOCKER_USERNAME/petclinic:latest
+  dependencies:
+    - build
   tags:
     - docker-runner
 
-# dockerize:
-#   stage: dockerize
-#   image: docker:stable
-#   services:
-#     - docker:dind
-#   before_script:
-#     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#   script:
-#     - docker build -t $DOCKER_USERNAME/petclinic:latest .
-#     - docker push $DOCKER_USERNAME/petclinic:latest
-#   dependencies:
-#     - build
-#   tags:
-#     - docker-runner
-# 
-# edited 332222
+# edited 22121
 # variables:
 #   DOCKER_USERNAME: "bassel10"
 #   DOCKER_PASSWORD: "wassim123"
