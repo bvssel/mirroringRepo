@@ -35,40 +35,13 @@ dockerize:
 
 deploy:
   stage: deploy
-  image: docker:stable
+  image: docker/compose:latest
   services:
     - docker:dind
   before_script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - docker pull $DOCKER_USERNAME/petclinic:latest
-    - docker run -d -p 8080:8080 --name petclinic $DOCKER_USERNAME/petclinic:latest
+    - docker-compose -f docker-compose.yml up -d
   tags:
     - docker-runner
 
-# stages:
-#   - build
-#   - test
-#   - dockerize
-#   - deploy
-# 
-# test:
-#   stage: test
-#   image: maven:3.6.3-openjdk-17
-#   script:
-#     - mvn test
-#   tags:
-#     - pipe-petclinic-runner
-# 
-# dockerize:
-#   stage: dockerize
-#   image: docker:stable
-#   services:
-#     - docker:dind
-#   before_script:
-#     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#   script:
-#     - docker build -t $DOCKER_USERNAME/petclinic:latest .
-#     - docker push $DOCKER_USERNAME/petclinic:latest
-#   tags:
-#     - pipe-petclinic-runner
