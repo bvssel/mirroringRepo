@@ -44,7 +44,7 @@ deploy:
     - docker pull $DOCKER_USERNAME/petclinic:latest
     - docker run -d -p 8080:8080 --name petclinic $DOCKER_USERNAME/petclinic:latest
   tags:
-    - pipe-petclinic-runner
+    - docker-runner
 
 # stages:
 #   - build
