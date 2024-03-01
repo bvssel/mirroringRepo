@@ -5,6 +5,7 @@ variables:
 stages:
   - build
   - dockerize
+  - deploy
 
 build:
   stage: build
