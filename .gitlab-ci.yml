@@ -1,47 +1,48 @@
-variables:
-  DOCKER_USERNAME: "bassel10"
-  DOCKER_PASSWORD: "wassim123"
-
 stages:
-  - build
-  - dockerize
+  # - build
+  # - dockerize
   - deploy
 
-build:
-  stage: build
-  image: maven:3.6.3-openjdk-17
-  script:
-    - mvn clean package -DskipTests
-  artifacts:
-    paths:
-      - target/*.jar
-  tags:
-    - pipe-petclinic-runner
+variables:
+  GIT_STRATEGY: clone
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+  DOCKER_IMAGE_TAG: petclinic
+  CI_REGISTRY_IMAGE: "registry.gitlab.com/pfe20243/mirroring"
 
-dockerize:
-  stage: dockerize
-  image: docker:stable
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-  script:
-    - docker build -t $DOCKER_USERNAME/petclinic:latest .
-    - docker push $DOCKER_USERNAME/petclinic:latest
-  dependencies:
-    - build
-  tags:
-    - docker-runner
+# build:
+#   stage: build
+#   image: maven:3.6.3-openjdk-17
+#   script:
+#     - mvn clean package -DskipTests
+#   artifacts:
+#     expire_in: 1 hour
+#     paths:
+#       - target/*.jar
+#   rules:
+#     - changes:
+#         - '*'
+
+# docker-build:
+#   stage: dockerize
+#   image: docker:latest
+#   services: 
+#     - name: docker:19.03.8-dind
+#   before_script:
+#     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+#   script:
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG" .
+#     - docker push "$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
+#     - echo "Registry image:" "$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
+#   tags:
+#     - docker-runner-cb
 
 deploy:
   stage: deploy
-  image: docker/compose:latest
-  services:
-    - docker:dind
   before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker-compose -f docker-compose.yml up -d
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$VM_IPADDRESS "cd /root/wassim/training/mirroringRepo/ && docker-compose down"
+    - ssh $SSH_USER@$VM_IPADDRESS "cd /root/wassim/training/mirroringRepo/ && CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG docker-compose -f custom-docker-compose.yml up -d"
   tags:
-    - docker-runner
-
+    - ssh-runner
